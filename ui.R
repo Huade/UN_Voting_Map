@@ -22,30 +22,24 @@ shinyUI(fluidPage(
                       "Keywords separated by commas:"
             ),
             
-            selectizeInput("sum_opt",
-                           "Choose summary option",
-                           choices = c("None" = 1,
-                                       "Yes percentage" = 2,
-                                       "No Percentage" = 3,
-                                       "Abstain Percentage" = 4),
-                           selected = 1
-            ),
-            
             htmlOutput("TitleSelectUI"
             ),
             
-            selectInput("output_opt",
-                        "Choose output formate",
-                        choices = c("Table" = 1,
-                                    "Map" = 2)
-            ),
+            downloadButton('downloadSession', 'Session Data'),
             
-            downloadButton('downloadData', 'Download Data')
+            downloadButton('downloadVoting', 'Voting Data')
         ),
         
         # Show a plot of the generated distribution
         mainPanel(
-            tabPanel("Table",dataTableOutput("sessionTable"))
+            tabsetPanel(
+                tabPanel("Session Data",dataTableOutput("sessionTable")),
+                # TODO: voting data
+                tabPanel("Voting Data",dataTableOutput("votingTable"))
+                # TODO: map
+                # tabPanel("Map" ,dataTableOutput("sessionTable"))
+            )
+            
         )
     )
 ))

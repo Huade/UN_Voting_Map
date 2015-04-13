@@ -1,3 +1,3 @@
 # global.r
 
-load("data/UN_vote.Rdata")
+load("data/UN_vote.RData")

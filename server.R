@@ -1,22 +1,22 @@
-
-# This is the server logic for a Shiny web application.
-# You can find out more about building applications with Shiny here:
-#
-# http://shiny.rstudio.com
-#
+# server.R
 
 library(shiny)
 
 shinyServer(function(input, output) {
-    # TODO: Change search result
     
     Select_session <- reactive({
         df <- session
+        
         if (length(input$keywords!=0)){
             kwd_pattern <- gsub(",", "|", input$keywords)
             df <- subset(df, grepl(kwd_pattern, df$descr, ignore.case = T))
         }
-        #df <- subset(df, df$date %in% input$DateRange)
+        
+        if (!is.null(input$DateRange)){
+            df <- subset(df, 
+                         as.Date(df$date)>=input$DateRange[1] & as.Date(df$date)<=input$DateRange[2])
+        }
+        
         return(df)
     })
     
@@ -26,31 +26,64 @@ shinyServer(function(input, output) {
             kwd_pattern <- gsub(",", "|", input$keywords)
             df <- subset(df, grepl(kwd_pattern, df$descr, ignore.case = T))
         }
-        #df <- subset(df, df$date %in% input$DateRange)
+        
+        if (!is.null(input$voteTitle)){
+            df <- subset(df, df$title==input$voteTitle)
+        }
+        
+        df <- subset(df, 
+                     as.Date(df$date)>=input$DateRange[1] & as.Date(df$date)<=input$DateRange[2])
         vars <- c("session","title", "date", "yes", "no", "abstain")
         df <- df[,vars]
         return(df)}, 
         options = list(searching = FALSE,
                        pageLength = 10)
-        )
+    )
     
-    output$downloadData <- downloadHandler(
-        filename = "UN_Voting.csv",
+    Select_voting <- reactive({
+        df <- vote
+        
+        if (length(Select_session()$rcid)!=0){
+            df <- subset(df, df$rcid == Select_session()$rcid)
+        }
+        
+        if (!is.null(input$voteTitle)){
+            df <- subset(df, df$title==input$voteTitle)
+        }
+        
+        return(df)
+    })
+    
+    output$votingTable <- renderDataTable({
+        df <- vote
+        # TODO: Fixit
+        df <- subset(df, df$rcid %in% Select_voting()$rcid)
+        vars <- c("Country", "CABB", "Vote")
+        df <- df[,vars]
+        }, 
+        options = list(pageLength = 10)
+    )
+    
+    output$downloadSession <- downloadHandler(
+        filename = "UN_Session.csv",
         content = function(file) {
             write.csv(Select_session(), file)
         }
     )
     
+    output$downloadVoting <- downloadHandler(
+        filename = "UN_Voting.csv",
+        content = function(file) {
+            write.csv(Select_voting(), file)
+        }
+    )
+    
     # Title selection
     output$TitleSelectUI <- renderUI({ 
-        if (input$sum_opt == 1){
-            selectizeInput("voteTitle", "Select vote title", choices = Select_session()$title)
-        }
-        else {
-            selectizeInput("voteTitle", "Select vote title(s)", 
-                           choices = SessionData()$title,
-                           multiple = T)
-        }
+        selectizeInput("voteTitle", "Select vote title", 
+                       choices = Select_session()$title,
+                       multiple = T,
+                       options = list(maxItems = 1))
     })
     
     
