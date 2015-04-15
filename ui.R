@@ -35,9 +35,10 @@ shinyUI(fluidPage(
             tabsetPanel(
                 tabPanel("Session Data",dataTableOutput("sessionTable")),
                 # TODO: voting data
-                tabPanel("Voting Data",dataTableOutput("votingTable"))
+                tabPanel("Voting Data",
+                         dataTableOutput("votingTable")),
                 # TODO: map
-                # tabPanel("Map" ,dataTableOutput("sessionTable"))
+                tabPanel("Map" ,plotOutput("map"))
             )
             
         )
