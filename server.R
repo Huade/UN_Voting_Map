@@ -142,7 +142,7 @@ shinyServer(function(input, output) {
                       panel.grid.minor=element_blank(),plot.background=element_blank())
         }
         
-    })
+    }, height = 400, width = 800)
     
     # Title selection
     output$TitleSelectUI <- renderUI({ 

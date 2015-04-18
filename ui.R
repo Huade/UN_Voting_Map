@@ -33,7 +33,7 @@ shinyUI(fluidPage(
             br(),
             br(),
             br(),
-            img(src = "http://visualidentity.georgetown.edu/sites/visualidentity/files/files/upload/logo-banner.jpg")
+            img(src = "logo.gif",height = 50, width = 235)
         ),
         
         # Show a plot of the generated distribution
