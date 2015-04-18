@@ -2,7 +2,6 @@
 
 library(shiny)
 library(ggplot2)
-library(maps)
 library(ggthemes)
 
 shinyServer(function(input, output) {
@@ -93,21 +92,32 @@ shinyServer(function(input, output) {
     # Map visualization
     output$map <- renderPlot({
         if (length(unique(Select_voting()$rcid))==1){
-            world_map <- map_data("world")
-            world_map$region <- tolower(world_map$region)
-            world_map$region <- ifelse(world_map$region == "usa",
-                                       "united states of america", 
-                                       world_map$region)
             
             ggplot()+
-                geom_map(data=world_map, map = world_map, aes(map_id=region), fill="#ecf0f1", color="white")+ 
-                geom_map(data=Select_voting(),map = world_map, aes(map_id=region, fill = as.factor(vote)), color="white")+
+                geom_map(data=World.points, map = World.points, aes(map_id=region), fill="#ecf0f1", color="white")+ 
+                geom_map(data=Select_voting(),map = World.points, aes(map_id=region, fill = as.character(vote)), color="white")+
                 expand_limits(x = world_map$long, y = world_map$lat)+
-                scale_fill_manual(values=c("#2ecc71", "#f39c12", "#e74c3c","#bdc3c7"), 
+                scale_fill_manual(values=c("#2ecc71", "#f39c12", "#e74c3c","#bdc3c7","#bdc3c7"), 
                                   name="Vote",
-                                  breaks=c(1, 2, 3, 8),
-                                  labels=c("Yes", "Abstain", "No", "Absent"))+
+                                  breaks=c("1", "2", "3", "8","9"),
+                                  labels=c("Yes", "Abstain", "No", "Absent","Not an UN member"))+
                 theme_few()+
+                theme(axis.line=element_blank(),axis.text.x=element_blank(),
+                      axis.text.y=element_blank(),axis.ticks=element_blank(),
+                      axis.title.x=element_blank(),
+                      axis.title.y=element_blank(),
+                      #legend.position="none",
+                      panel.background=element_blank(),panel.border=element_blank(),panel.grid.major=element_blank(),
+                      panel.grid.minor=element_blank(),plot.background=element_blank())
+        }
+        
+        else if (length(input$voteTitle)==0){
+            ggplot()+
+                geom_map(data=World.points, map = World.points, aes(map_id=region), fill="#ecf0f1", color="white")+
+                expand_limits(x = world_map$long, y = world_map$lat)+
+                theme_few()+
+                geom_text(aes(x = mean(world_map$long), y = mean(world_map$lat)), label="Select vote title to view map",
+                          size = 10, colour = "#3498db")+
                 theme(axis.line=element_blank(),axis.text.x=element_blank(),
                       axis.text.y=element_blank(),axis.ticks=element_blank(),
                       axis.title.x=element_blank(),
@@ -115,11 +125,15 @@ shinyServer(function(input, output) {
                       panel.background=element_blank(),panel.border=element_blank(),panel.grid.major=element_blank(),
                       panel.grid.minor=element_blank(),plot.background=element_blank())
         }
+        
         else{
+
             ggplot()+
-                geom_map(data=world_map, map = world_map, aes(map_id=region), fill="#ecf0f1", color="white")+
+                geom_map(data=World.points, map = World.points, aes(map_id=region), fill="#ecf0f1", color="white")+
                 expand_limits(x = world_map$long, y = world_map$lat)+
                 theme_few()+
+                geom_text(aes(x = mean(world_map$long), y = mean(world_map$lat)), label="VOTING DATA UNAVAILABLE",
+                              size = 10, colour = "#3498db")+
                 theme(axis.line=element_blank(),axis.text.x=element_blank(),
                       axis.text.y=element_blank(),axis.ticks=element_blank(),
                       axis.title.x=element_blank(),
