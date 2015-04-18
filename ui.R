@@ -13,9 +13,9 @@ shinyUI(fluidPage(
                            "Resolution date range:",
                            min = min(session$date),
                            max = max(session$date),
-                           start = min(session$date),
+                           start = "2013-01-01 UTC",
                            end = max(session$date),
-                           startview = "year"
+                           startview = "decade"
             ),
             
             textInput("keywords",
