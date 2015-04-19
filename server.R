@@ -91,7 +91,7 @@ shinyServer(function(input, output) {
     output$votingTable <- renderDataTable({
         df <- vote
         df <- subset(df, df$rcid %in% unique(Select_voting()$rcid))
-        vars <- c("Country", "CABB", "Vote")
+        vars <- c("unres", "Country", "CABB", "Vote")
         df <- df[,vars]
     }, 
     options = list(pageLength = 10)
@@ -111,7 +111,7 @@ shinyServer(function(input, output) {
     output$downloadVoting <- downloadHandler(
         filename = "UN_Voting.csv",
         content = function(file) {
-            vars <- c("Country", "CABB", "Vote")
+            vars <- c("unres", "Country", "CABB", "Vote")
             df <- Select_voting()[,vars]
             write.csv(df, file)
         }
@@ -120,15 +120,17 @@ shinyServer(function(input, output) {
     # Map visualization
     output$map <- renderPlot({
         if (length(unique(Select_voting()$rcid))==1){
+            color_for_map <- subset(colormatrix, colormatrix$breaksvalue %in% unique(Select_voting()$vote))
             
             ggplot()+
                 geom_map(data=World.points, map = World.points, aes(map_id=region), fill="#ecf0f1", color="white")+ 
                 geom_map(data=Select_voting(),map = World.points, aes(map_id=region, fill = as.character(vote)), color="white")+
                 expand_limits(x = world_map$long, y = world_map$lat)+
-                scale_fill_manual(values=c("#2ecc71", "#f39c12", "#e74c3c","#9b59b6","#bdc3c7"), 
-                                  name="Vote",
-                                  breaks=c("1", "2", "3", "8","9"),
-                                  labels=c("Yes", "Abstain", "No", "Absent","Not an UN member"))+
+                scale_fill_manual(
+                    values=color_for_map$colors, 
+                    name="Vote",
+                    breaks=color_for_map$breaksvalue,
+                    labels=color_for_map$breakslabel)+
                 theme_few()+
                 theme(axis.line=element_blank(),axis.text.x=element_blank(),
                       axis.text.y=element_blank(),axis.ticks=element_blank(),
@@ -184,8 +186,8 @@ shinyServer(function(input, output) {
     official_doc_link <- reactive({
         df <- Select_session()
         if (!is.null(input$voteTitle)){
-            if (df$session>30){
                 df <- subset(df, df$unres_title==input$voteTitle)
+                if (df$session>30){
                 url_string <- paste("http://www.un.org/en/ga/search/view_doc.asp?symbol=%20A/RES/",
                                     gsub("\\D", "",strsplit(df$unres[1], split = "/")[[1]][2]),
                                     "/",
@@ -201,7 +203,7 @@ shinyServer(function(input, output) {
     })
     
     output$OfficialDoc <- renderUI({
-        p("View official document at", a("un.org",href = official_doc_link(), target="_blank"))
+        a("Click to view official document at un.org",href = official_doc_link(), target="_blank")
     })
     
     
