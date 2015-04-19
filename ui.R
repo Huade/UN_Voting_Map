@@ -1,10 +1,11 @@
+# ui.R
 
 library(shiny)
 
 shinyUI(fluidPage(
     
     # Application title
-    titlePanel("United Nations General Assembly Voting Data"),
+    titlePanel("United Nations General Assembly Voting Data (Beta)"),
     
     # Sidebar with a slider input for number of bins
     sidebarLayout(
@@ -21,18 +22,28 @@ shinyUI(fluidPage(
             textInput("keywords",
                       "Keywords separated by commas:"
             ),
+            selectizeInput("IssueArea",
+                           label = "Select Issue Area of interest",
+                           choices = c("Middle East" = "me",
+                                       "Nuclear" = "nu",
+                                       "Disarmament" = "di",
+                                       "Human Rights" = "hr",
+                                       "Colonialism" = "co",
+                                       "Economics" = "ec",
+                                       "Vote on which US has lobbied" = "us"),
+                           multiple = T,
+                           options = list(maxItems = 1)),
             
             htmlOutput("TitleSelectUI"
             ),
             
             downloadButton('downloadSession', 'Session Data'),
-            
+            br(),
             downloadButton('downloadVoting', 'Voting Data'),
             br(),
             br(),
             br(),
-            br(),
-            br(),
+            htmlOutput("OfficialDoc"),
             img(src = "logo.gif",height = 50, width = 235)
         ),
         
@@ -42,11 +53,19 @@ shinyUI(fluidPage(
                 tabPanel("Session Data",dataTableOutput("sessionTable")),
                 tabPanel("Voting Data",
                          dataTableOutput("votingTable")),
-                tabPanel("Map" ,plotOutput("map")),
-                p("Bailey, Michael, Anton  Strezhnev and Erik Voeten. Forthcoming.'Estimating Dynamic State Preferences from United Nations Voting Data.' Journal of Conflict Resolution. Visualized by Huade Huo. Code available on", 
-                  a("GitHub.",href = "https://github.com/Huade/UN_Voting_Map"))
-            )
+                tabPanel("Map" ,plotOutput("map"))
+            ),
             
+            p("Full data available at Voeten, Erik; Strezhnev, Anton; Bailey, Michael, 2013,",
+              a("United Nations General Assembly Voting Data.", href = "http://hdl.handle.net/1902.1/12379"), 
+              "Visualized by Huade Huo. Code available on", 
+              a("GitHub.",href = "https://github.com/Huade/UN_Voting_Map")
+            ),
+            
+            p("Map reflects current (2015) boarders. Map data provided by",
+              a("Natural Earth Project", href = "http://www.naturalearthdata.com/")),
+            
+            p("This only displays non-unanimous resolutions.")
         )
     )
 ))

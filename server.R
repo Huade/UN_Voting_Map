@@ -5,7 +5,7 @@ library(ggplot2)
 library(ggthemes)
 
 shinyServer(function(input, output) {
-   
+    
     # Session selector 
     Select_session <- reactive({
         df <- session
@@ -19,17 +19,45 @@ shinyServer(function(input, output) {
             df <- subset(df, 
                          as.Date(df$date)>=input$DateRange[1] & as.Date(df$date)<=input$DateRange[2])
         }
+        if ("me" %in% input$IssueArea){
+            df <- subset(df, df$me==1)
+        }
+        
+        if ("nu" %in% input$IssueArea){
+            df <- subset(df, df$nu==1)
+        }
+        
+        if ("di" %in% input$IssueArea){
+            df <- subset(df, df$di==1)
+        }
+        
+        if ("hr" %in% input$IssueArea){
+            df <- subset(df, df$hr==1)
+        }
+        
+        if ("hr" %in% input$IssueArea){
+            df <- subset(df, df$hr==1)
+        }
+        
+        if ("ec" %in% input$IssueArea){
+            df <- subset(df, df$ec==1)
+        }
+        
+        if ("us" %in% input$IssueArea){
+            df <- subset(df, df$importantvote==1)
+        }
         
         return(df)
     })
     
     # Session table output 
     output$sessionTable <- renderDataTable({
-        df <- session
+        df <- Select_session()
         if (length(input$keywords!=0)){
             kwd_pattern <- gsub(",", "|", input$keywords)
             df <- subset(df, grepl(kwd_pattern, df$descr, ignore.case = T))
         }
+        
         
         if (!is.null(input$voteTitle)){
             df <- subset(df, df$unres_title==input$voteTitle)
@@ -37,7 +65,7 @@ shinyServer(function(input, output) {
         
         df <- subset(df, 
                      as.Date(df$date)>=input$DateRange[1] & as.Date(df$date)<=input$DateRange[2])
-        vars <- c("session","unres_title", "date", "yes", "no", "abstain")
+        vars <- c("date","session","unres_title", "descr", "yes", "no", "abstain")
         df <- df[,vars]
         return(df)}, 
         options = list(searching = FALSE,
@@ -65,8 +93,8 @@ shinyServer(function(input, output) {
         df <- subset(df, df$rcid %in% unique(Select_voting()$rcid))
         vars <- c("Country", "CABB", "Vote")
         df <- df[,vars]
-        }, 
-        options = list(pageLength = 10)
+    }, 
+    options = list(pageLength = 10)
     )
     
     # Session data downloader
@@ -97,7 +125,7 @@ shinyServer(function(input, output) {
                 geom_map(data=World.points, map = World.points, aes(map_id=region), fill="#ecf0f1", color="white")+ 
                 geom_map(data=Select_voting(),map = World.points, aes(map_id=region, fill = as.character(vote)), color="white")+
                 expand_limits(x = world_map$long, y = world_map$lat)+
-                scale_fill_manual(values=c("#2ecc71", "#f39c12", "#e74c3c","#bdc3c7","#bdc3c7"), 
+                scale_fill_manual(values=c("#2ecc71", "#f39c12", "#e74c3c","#9b59b6","#bdc3c7"), 
                                   name="Vote",
                                   breaks=c("1", "2", "3", "8","9"),
                                   labels=c("Yes", "Abstain", "No", "Absent","Not an UN member"))+
@@ -116,7 +144,7 @@ shinyServer(function(input, output) {
                 geom_map(data=World.points, map = World.points, aes(map_id=region), fill="#ecf0f1", color="white")+
                 expand_limits(x = world_map$long, y = world_map$lat)+
                 theme_few()+
-                geom_text(aes(x = mean(world_map$long), y = mean(world_map$lat)), label="Select vote title to view map",
+                geom_text(aes(x = mean(world_map$long), y = mean(world_map$lat)), label="Select the vote title to view map",
                           size = 10, colour = "#3498db")+
                 theme(axis.line=element_blank(),axis.text.x=element_blank(),
                       axis.text.y=element_blank(),axis.ticks=element_blank(),
@@ -127,13 +155,13 @@ shinyServer(function(input, output) {
         }
         
         else{
-
+            
             ggplot()+
                 geom_map(data=World.points, map = World.points, aes(map_id=region), fill="#ecf0f1", color="white")+
                 expand_limits(x = world_map$long, y = world_map$lat)+
                 theme_few()+
                 geom_text(aes(x = mean(world_map$long), y = mean(world_map$lat)), label="VOTING DATA UNAVAILABLE",
-                              size = 10, colour = "#3498db")+
+                          size = 10, colour = "#3498db")+
                 theme(axis.line=element_blank(),axis.text.x=element_blank(),
                       axis.text.y=element_blank(),axis.ticks=element_blank(),
                       axis.title.x=element_blank(),
@@ -146,10 +174,34 @@ shinyServer(function(input, output) {
     
     # Title selection
     output$TitleSelectUI <- renderUI({ 
-        selectizeInput("voteTitle", "Select vote title", 
+        selectizeInput("voteTitle", "Select the vote title", 
                        choices = Select_session()$unres_title,
                        multiple = T,
                        options = list(maxItems = 1))
+    })
+    
+    # Official document
+    official_doc_link <- reactive({
+        df <- Select_session()
+        if (!is.null(input$voteTitle)){
+            if (df$session>30){
+                df <- subset(df, df$unres_title==input$voteTitle)
+                url_string <- paste("http://www.un.org/en/ga/search/view_doc.asp?symbol=%20A/RES/",
+                                    gsub("\\D", "",strsplit(df$unres[1], split = "/")[[1]][2]),
+                                    "/",
+                                    gsub("\\D", "",strsplit(df$unres[1], split = "/")[[1]][3]),
+                                    sep = "")
+            }
+            else {url_string = NULL}
+        }
+        else {
+            url_string = NULL
+        }
+        return(url_string)
+    })
+    
+    output$OfficialDoc <- renderUI({
+        p("View official document at", a("un.org",href = official_doc_link(), target="_blank"))
     })
     
     
