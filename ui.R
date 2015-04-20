@@ -24,15 +24,14 @@ shinyUI(fluidPage(
             ),
             selectizeInput("IssueArea",
                            label = "Select Issue Area of interest",
-                           choices = c("Middle East" = "me",
+                           choices = c("All" = "all",
+                                       "Middle East" = "me",
                                        "Nuclear" = "nu",
                                        "Disarmament" = "di",
                                        "Human Rights" = "hr",
                                        "Colonialism" = "co",
                                        "Economics" = "ec",
-                                       "Vote on which US has lobbied" = "us"),
-                           multiple = T,
-                           options = list(maxItems = 1)),
+                                       "Vote on which US has lobbied" = "us")),
             
             htmlOutput("TitleSelectUI"
             ),
@@ -62,10 +61,9 @@ shinyUI(fluidPage(
               a("GitHub.",href = "https://github.com/Huade/UN_Voting_Map")
             ),
             
-            p("Map reflects current (2015) boarders. Map data provided by",
-              a("Natural Earth Project", href = "http://www.naturalearthdata.com/")),
+            p("Map reflects current (2015) borders. Map data provided by",
+              a("Natural Earth Project", href = "http://www.naturalearthdata.com/"))
             
-            p("This only displays non-unanimous resolutions.")
         )
     )
 ))

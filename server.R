@@ -203,7 +203,7 @@ shinyServer(function(input, output) {
     })
     
     output$OfficialDoc <- renderUI({
-        a("Click to view official document at un.org",href = official_doc_link(), target="_blank")
+        h5(a("Click to view official document at un.org",href = official_doc_link(), target="_blank"))
     })
     
     
