@@ -1,6 +1,6 @@
-# United Nations General Assembly Voting Data (Beta)
+# UN General Assembly Voting Visualization (Beta)
 
-Licenses: GNU General Public License v2.0
+License: GNU General Public License v2.0
 
 This is the source code of [United Nations General Assembly Voting Data Visualization](https://erikvoeten.shinyapps.io/UNVoting/).
 
