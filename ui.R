@@ -43,8 +43,8 @@ shinyUI(fluidPage(
             br(),
             br(),
             htmlOutput("OfficialDoc"),
-            img(src = "logo.gif",height = 50, width = 235)
-        ),
+            img(src = "logo.gif",height = 50, width = 235),
+            width = 3),
         
         # Show a plot of the generated distribution
         mainPanel(
@@ -56,8 +56,9 @@ shinyUI(fluidPage(
             ),
             
             p("Full data available at Voeten, Erik; Strezhnev, Anton; Bailey, Michael, 2013,",
-              a("United Nations General Assembly Voting Data.", href = "http://hdl.handle.net/1902.1/12379"), 
-              "Visualized by Huade Huo. Code available on", 
+              a("United Nations General Assembly Voting Data.", href = "http://hdl.handle.net/1902.1/12379")), 
+              
+            p("Visualized by Huade Huo. Code available on", 
               a("GitHub.",href = "https://github.com/Huade/UN_Voting_Map")
             ),
             

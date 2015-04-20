@@ -69,7 +69,8 @@ shinyServer(function(input, output) {
         df <- df[,vars]
         return(df)}, 
         options = list(searching = FALSE,
-                       pageLength = 10)
+                       lengthMenu = list(c(5, 25, -1), c('5', '25', 'All')),
+                       pageLength = 5)
     )
     
     # Voting selector
