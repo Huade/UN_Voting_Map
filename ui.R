@@ -56,14 +56,14 @@ shinyUI(fluidPage(
             ),
             
             p("Full data available at Voeten, Erik; Strezhnev, Anton; Bailey, Michael, 2013,",
-              a("United Nations General Assembly Voting Data.", href = "http://hdl.handle.net/1902.1/12379")), 
+              a("United Nations General Assembly Voting Data.", href = "https://dataverse.harvard.edu/dataset.xhtml?persistentId=hdl:1902.1/12379")), 
               
             p("Visualized by Huade Huo. Code available on", 
-              a("GitHub.",href = "https://github.com/Huade/UN_Voting_Map")
+              a("GitHub",href = "https://github.com/Huade/UN_Voting_Map"), "under the MIT License."
             ),
             
-            p("Map reflects current (2015) borders. Map data provided by",
-              a("Natural Earth Project", href = "http://www.naturalearthdata.com/"))
+            p("Map reflects current (2015) borders. Map data provided by the",
+              a("Natural Earth", href = "http://www.naturalearthdata.com/"))
             
         )
     )
