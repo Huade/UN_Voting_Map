@@ -6,7 +6,7 @@ library(shiny)
 shinyUI(fluidPage(
     
     # Application title
-    titlePanel("United Nations General Assembly Voting Data (Beta)"),
+    titlePanel("United Nations General Assembly Voting Data Viewer (Beta)"),
     
     # Sidebar Layout includes sidebar Panel and Main Panel
     sidebarLayout(
@@ -23,7 +23,7 @@ shinyUI(fluidPage(
             
             # Key word input
             textInput("keywords",
-                      "Keywords separated by commas:"
+                      "Keywords of interest:"
             ),
             
             # Issue area selector
@@ -66,7 +66,20 @@ shinyUI(fluidPage(
                 tabPanel("Voting Data",
                          dataTableOutput("votingTable")),
                 # Map tab panel
-                tabPanel("Map" ,plotOutput("map"))
+                tabPanel("Map" ,plotOutput("map")),
+                # Help tab panel
+                tabPanel(
+                    "Help",
+                    h3("Make Locating and visualizing UNGA Voting easier"),
+                    p("Locating an UNGA resolution is straightforward."),
+                    p("First, specify date range of the resolution. This data viewer currently support resulution from the first UNGA voting to 2014-9-9."),
+                    p("Then, you may want to input keywords to search resolution description. You can separate different keywords by comma (upcoming)."),
+                    p("You can also select issue area of interest (optional)."),
+                    p("Finally, select UNGA resolution title to locate vote."),
+                    p("Now, you can view voting record by clicking the 'Voting Data' tab, or view map by clicking the 'Map' tab, or retrive official document by clicking 'Click to view official document at un.org' (if available)"),
+                    p("Enjoy!")
+                    
+                )
             ),
             
             # Footnotes
